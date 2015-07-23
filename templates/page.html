@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{{ title }}</title>
+    {%- for file in style_files %}
+    <link href="{{ url_for('static', filename=file) }}" rel="stylesheet" type="text/css">
+    {%- endfor %}
+    <style type="text/css">
+        body {
+            line-height: 1;
+            font-family: 'Open Sans', Helvetica, Arial, Helvetica, sans-serif;
+            background: white;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        header, section, footer,
+        aside, nav, article, figure {
+            display: block;
+        }
+
+        #ln-header {
+            background: #025588;
+            color: #afe1da;
+        }
+
+        #ln-header h1 {
+            font-size: 2.2em;
+            font-weight: bold;
+            margin: 0px;
+            margin-left: 0.5em;
+            margin-bottom: 0.5em;
+            padding-top: 0.2em;
+            color: #dff1fa;
+            font-family: inherit;
+            margin-left: 2em;
+        }
+
+        #ln-header h1 a {
+            color: #dff1fa;
+        }
+
+        #ln-pathline {
+            font-size: 1.1em;
+            background-color: #003344;
+            margin: 0px;
+            padding-top: 0.3em;
+            padding-bottom: 0.3em;
+            padding-left: 2em;
+            color: white;
+        }
+
+        #ln-pathline a {
+            color: white;
+        }
+
+        #ln-actionline {
+            font-size: 1.1em;
+            background-color: #003344;
+            margin: 0px;
+            padding-top: 0.3em;
+            padding-bottom: 0.3em;
+            padding-left: 2em;
+            color: white;
+        }
+
+        #ln-actionline a {
+            color: white;
+        }
+
+        .ln-line-item {
+            display: inline-block;
+            /*background: #885502;*/
+            padding-left: 1em;
+            padding-right: 1em;
+            height: 100%;
+        }
+
+        section {
+            padding-left: 4em;
+            padding-top: 2em;
+            padding-right: 4em;
+            padding-bottom: 2em;
+        }
+
+    </style>
+</head>
+
+<body>
+<header id="ln-header">
+<div id="ln-pathline">
+<span class="ln-line-item">{{git_status}}</span> |
+<span class="ln-line-item">{{git_branch}}</span> |
+<span class="ln-line-item">{{file_path}}</span>
+</div>
+<h1><a href="{{path}}">{{path}}</a></h1>
+<div id="ln-actionline">
+{%- if is_editable %}
+<span class="ln-line-item"><a href={{path}}/.edit>Edit</a></span> |
+{%- else %}
+<span class="ln-line-item">Edit</span> |
+{%- endif %}
+<span class="ln-line-item"><a href={{path}}/.terminal>Terminal</a></span> |
+<span class="ln-line-item"><a href="/tree">Tree</a></span> |
+<span class="ln-line-item"><a href="/start">Start</a></span> |
+<span class="ln-line-item"><a href={{path}}/.git>Git</a></span>
+</div>
+</header>
+{% block content %}
+<section>{{content|escape}}</section>
+{% endblock %}

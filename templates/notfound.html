@@ -1,0 +1,13 @@
+{% extends "page.html" %}
+{% block content %}
+<section>
+    <h1>'{{path}}' does not exists.</h1>
+    <p>
+    <ul>
+        {%- for renderer in renderers %}
+        <li><a href="{{path}}{{renderer.extension}}/.create">Create '{{file_path}}{{renderer.extension}}' [{{renderer.name}}]</a>
+        {%- endfor %}
+    </ul>
+    </p>
+</section>
+{% endblock %}

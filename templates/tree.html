@@ -1,0 +1,13 @@
+{% extends "page.html" %}
+{% block content %}
+<section>
+    <h1>Tree</h1>
+    <p>
+    <ul>
+        {%- for path, status in paths  %}
+        <li><a href="{{path}}">{{path}}</a> {{status}}
+        {%- endfor %}
+    </ul>
+    </p>
+</section>
+{% endblock %}
