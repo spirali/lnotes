@@ -6,9 +6,8 @@ from render import renderers
 import utils
 
 SRC_DIR = os.path.dirname(os.path.abspath(__file__))
-ROOT_DIR = os.path.dirname(SRC_DIR)
-TEMPLATE_DIR = os.path.join(ROOT_DIR, "templates")
-STATIC_DIR = os.path.join(ROOT_DIR, "static")
+TEMPLATE_DIR = os.path.join(SRC_DIR, "templates")
+STATIC_DIR = os.path.join(SRC_DIR, "static")
 
 TOPLEVEL = None
 CONFIG = None
@@ -16,7 +15,7 @@ CONFIG = None
 app = Flask(__name__,
             template_folder=TEMPLATE_DIR,
             static_folder=STATIC_DIR)
-app.debug = True
+#app.debug = True
 
 @app.route("/")
 def start():
@@ -29,15 +28,18 @@ def facicon():
 @app.route("/tree")
 def tree():
     paths = []
-    for f in git.ls_files(TOPLEVEL):
+    for item in git.status(TOPLEVEL):
+        status = item[:2]
+        f = item[3:]
+        print f
         for renderer in renderers:
             if f.endswith(renderer.extension):
                 break
         else:
             continue
-        file_path = os.path.join(f)
+        file_path = os.path.join(os.path.join(TOPLEVEL, f))
         if os.path.isfile(file_path):
-            paths.append(("/" + f[:f.rfind(".")], git.status_for_file(TOPLEVEL, f)))
+            paths.append(("/" + f[:f.rfind(".")], status))
     paths.sort()
 
     args = {
@@ -98,7 +100,7 @@ def create_page(path):
         with open(file_path, "w") as f:
             f.write("\nHello world!\n")
     git.add_file(TOPLEVEL, file_path)
-    return redirect("/" + path[:path.rfind(".")])
+    return redirect("/" + path[:path.rfind(".")] + "/.edit")
 
 @app.route("/<path:path>/.edit")
 def edit_page(path):
@@ -151,13 +153,14 @@ def init():
     global TOPLEVEL, CONFIG
     try:
         TOPLEVEL = git.toplevel_path(None)
+        print "Git repostory ...", TOPLEVEL
     except utils.ProgramException as e:
         print "Working directory does not look like a git repository. Git says:"
         print e.stderr
         sys.exit(0)
-    os.chdir(TOPLEVEL)
     CONFIG = read_or_make_config()
 
-if __name__ == "__main__":
-    init()
+def main():
     app.run(port=CONFIG.getint("SERVER", "port"))
+
+
